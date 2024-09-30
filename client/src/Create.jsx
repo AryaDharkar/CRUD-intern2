@@ -1,7 +1,10 @@
 import { useState, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Create = () => {
+  const nav = useNavigate();
+
   const rName = useRef();
   const rRoll = useRef();
   const rMarks = useRef();
@@ -10,7 +13,7 @@ const Create = () => {
   const [name, setName] = useState("");
   const [roll, setRoll] = useState("");
   const [marks, setMarks] = useState("");
-  const [file, setFile] = useState("");
+  const [filename, setFilename] = useState("");
   const [msg, setMsg] = useState("");
 
   const hName = (event) => {
@@ -23,14 +26,14 @@ const Create = () => {
     setMarks(event.target.value);
   };
   const hFile = (event) => {
-    setFile(event.target.files[0]);
+    setFilename(event.target.files[0]);
   };
 
   const save = async (event) => {
     event.preventDefault();
 
     //check to see if all fields are filled
-    if (name === "" || roll === "" || marks === "" || file === "") {
+    if (name === "" || roll === "" || marks === "" || filename === "") {
       setMsg("All fields are required");
       return;
     }
@@ -42,7 +45,7 @@ const Create = () => {
     formData.append("name", name);
     formData.append("roll", roll);
     formData.append("marks", marks);
-    formData.append("file", file);
+    formData.append("file", filename);
 
     //send data to server
     try {
@@ -50,12 +53,15 @@ const Create = () => {
 
       //check if only 1 record was affected
       if (res.data.affectedRows === 1) {
-        setMsg("Record saved successfully");
-        rName.current.value = "";
-        rRoll.current.value = "";
-        rMarks.current.value = "";
+        setMsg(`Record saved successfully...Redirecting to home page`);
         rFile.current.value = "";
+        setRoll("");
+        setMarks("");
+        setName("");
         rName.current.focus();
+        setTimeout(() => {
+          nav("/");
+        }, 3000);
       }
       //check if roll no already exists
       else if (res.data.errno === 1062) {
@@ -85,6 +91,7 @@ const Create = () => {
             placeholder="Name"
             ref={rName}
             onChange={hName}
+            value={name}
           />
           <br />
           <br />
@@ -94,6 +101,7 @@ const Create = () => {
             placeholder="Roll No"
             ref={rRoll}
             onChange={hRoll}
+            value={roll}
           />
           <br />
           <br />
@@ -103,6 +111,7 @@ const Create = () => {
             placeholder="Marks"
             ref={rMarks}
             onChange={hMarks}
+            value={marks}
           />
           <br />
           <br />

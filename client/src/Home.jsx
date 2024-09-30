@@ -3,6 +3,7 @@ import axios from "axios";
 
 const Home = () => {
   const [records, setRecords] = useState([]);
+
   useEffect(() => {
     const getRecords = async () => {
       const url = "http://localhost:9000/read";
@@ -39,49 +40,56 @@ const Home = () => {
   };
 
   return (
-    <>
-      <center>
-        <h1>Welcome to your records</h1>
+    <center>
+      <h1>Welcome to your records</h1>
+
+      {records.length > 0 ? (
         <table>
-          <tr>
-            <th>Name</th>
-            <th>Roll No</th>
-            <th>Marks</th>
-            <th>File</th>
-            <th>Download</th>
-            <th>Delete</th>
-          </tr>
-          {records.map((record) => (
+          <thead>
             <tr>
-              <td>{record.name}</td>
-              <td>{record.roll}</td>
-              <td>{record.marks}</td>
-              <td>
-                <img
-                  src={`http://localhost:9000/uploads/${record.file}`}
-                  alt="Uploaded file"
-                  style={{ width: "100px", height: "100px" }}
-                />
-              </td>
-              <td>
-                <button onClick={() => handleDownload(record.file)}>
-                  Download
-                </button>
-              </td>
-              <td>
-                <button
-                  onClick={() => {
-                    handleDelete(record.roll);
-                  }}
-                >
-                  Delete
-                </button>
-              </td>
+              <th>Name</th>
+              <th>Roll No</th>
+              <th>Marks</th>
+              <th>File</th>
+              <th>Download</th>
+              <th>Delete</th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {records.map((record) => (
+              <tr key={record.roll}>
+                <td>{record.name}</td>
+                <td>{record.roll}</td>
+                <td>{record.marks}</td>
+                <td>
+                  <img
+                    src={`http://localhost:9000/uploads/${record.file}`}
+                    alt="Uploaded file"
+                    style={{ width: "100px", height: "100px" }}
+                  />
+                </td>
+                <td>
+                  <button onClick={() => handleDownload(record.file)}>
+                    Download
+                  </button>
+                </td>
+                <td>
+                  <button onClick={() => handleDelete(record.roll)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
-      </center>
-    </>
+      ) : (
+        <>
+          <h2>No records found</h2>
+          <a href="/create">Click Here to create a record</a>
+        </>
+      )}
+    </center>
   );
 };
+
 export default Home;
